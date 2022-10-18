@@ -5,6 +5,7 @@ import hashlib
 import requests
 import datetime
 import re
+from biomage_programmatic_interface.s3_object import S3Object
 from biomage_programmatic_interface.sample import Sample
 from biomage_programmatic_interface.utils import load_json
 
@@ -29,13 +30,15 @@ class Connection:
 
             print('Authorization succesfull')
             self.__jwt = resp['AuthenticationResult']['IdToken']
+            print(self.__jwt)
         except:
             raise Exception("Incorrect username or password")
 
     def __fetch_api(self, url, json, method='POST'):
         methods = {
             'POST': requests.post,
-            'PATCH': requests.patch
+            'PATCH': requests.patch,
+            'GET': requests.get
         }
 
         root_url = self.__default_config['api-url']
@@ -94,3 +97,9 @@ class Connection:
 
         print('Project successfully created!')
         print('Visit {} to process your project.'.format(self.__default_config['ui-url']))
+
+    def upload_experiment_results(self, experiment_id, img_path):
+        s3Url = self.__fetch_api('v2/uploadExperimentResults/{}'.format(experiment_id), 'GET')
+        
+        s3Object = S3Object(img_path)
+        s3Object.upload_to_S3(s3Url)
