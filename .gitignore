@@ -7,3 +7,4 @@ dist/
 .nextflow.log*
 .nextflow
 exception_testing
+test.py

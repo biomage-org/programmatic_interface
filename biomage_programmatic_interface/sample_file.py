@@ -56,7 +56,10 @@ class SampleFile:
             except:
                 return False
 
-    def __compress(self):
+    def compress(self):
+        if self.__is_compressed():
+            return
+
         with open(self.__path, 'rb') as f_in:
             compressed_url = self.__path + '.gz'
             with gzip.open(compressed_url, 'wb') as f_out:
@@ -64,9 +67,5 @@ class SampleFile:
                 shutil.copyfileobj(f_in, f_out)
                 self.__path = compressed_url
 
-    def upload_to_S3(self, signed_url):
-        if not self.__is_compressed():
-            self.__compress()
-        headers = { 'Content-type': 'application/octet-stream' }
-        with open(self.__path, 'rb') as file:
-            response = requests.put(signed_url, headers = headers, data = file.read())
+    def get_path(self):
+        return self.__path
