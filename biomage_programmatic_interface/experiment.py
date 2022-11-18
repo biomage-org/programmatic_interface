@@ -1,7 +1,7 @@
 import datetime
 import hashlib
 from biomage_programmatic_interface.sample import Sample
-import re
+from biomage_programmatic_interface.exceptions import *
 
 class Experiment:
     def __init__(self, connection, verbose):
@@ -32,6 +32,20 @@ class Experiment:
             except Exception:
                 print('Upload failed. This is likely an error within the python package for uploading.')
                 print('Please send an email to hello@biomage.net and we will try to resolve this problem as soon as possible.')
+
+    def download_data(self, experiment_id, cell_sets = False):
+        file_types = ['biomage-source', 'cell-sets'] if cell_sets else ['rds']
+        urls = [self.__get_data_url(experiment_id, file_type) for file_type in file_types] 
+        print(urls)
+
+    def __get_data_url(self, experiment_id, file_type):
+        url_rds = f'/experiments/{experiment_id}/download/{file_type}'
+        response = self.connection.fetch_api(url_rds, {}, 'GET')
+
+        if response.status_code == 404:
+            raise FileNotExists(file_type)
+
+        return response.content
 
     def __notify_upload(self, experiment_id, sample_id, sample_file_type):
         url = "v2/experiments/{}/samples/{}/sampleFiles/{}".format(experiment_id, sample_id, sample_file_type)
