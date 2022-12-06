@@ -2,24 +2,9 @@ import hashlib
 import json
 import re
 
-samples = [
-    {
-        'metadata': {'Track 2': 'track2', 'Track-4': 'trak4'},
-        'name': '10k PBMCs',
-        'sampleId': "e175f060-bca8-4f5a-9256-e253ee9de785",
-        'type': '10x',
-        'options': {},
-    }, 
-    {
-        'options': {},  
-        'name': 'WT1',
-        'sampleId': "a175f060-bca8-4f5a-9256-e253ee9de785",
-        'type': '10x',
-        'metadata': {'Track-4': 'track4d', 'Track 2': 'trak2d', },
-    }
-]
+samples = [{'metadata': {'wow': 'amazing'}, 'name': 'WT1', 'sampleId': '195b8930-2750-431c-bac7-0fa334c1c6c1', 'type': '10x', 'options': {}}, {'metadata': {'wow': 'N.A.'}, 'name': '10k PBMCs', 'sampleId': '9c1cca61-78ed-4314-a215-f7d6c21c08f5', 'type': '10x', 'options': {}}]
 
-metadata_tracks = ['Track 2', 'Track-4']
+metadata_tracks = ['wow']
 
 sorted_samples = sorted(samples, key = lambda sample: sample['sampleId'])
 
@@ -49,12 +34,15 @@ if len(metadata_tracks):
 
 json_data = json.dumps(data, separators=(',', ':')).encode('utf-8')
 
-# print(json_data)
-
-
+print(json_data)
 
 hash = hashlib.sha1()
-hash.update(f'string:{len(json_data)}:'.encode('utf-8'))
-hash.update(json_data)
+
+prefix = 'object:9:string:9:prototype:Undefined,string:9:__proto__:object:3:string:9:prototype:Undefined,string:9:__proto__:Null,string:11:constructor:fn:string:8:[native]string:20:function-name:Objectobject:0:,,string:11:constructor:fn:string:8:[native]string:20:function-name:Objectstring:12:[CIRCULAR:2],string:8:metadata:object:4:string:9:prototype:Undefined,string:9:__proto__:string:12:[CIRCULAR:1],string:11:constructor:fn:string:8:[native]string:20:function-name:Objectstring:12:[CIRCULAR:2],string:3:wow:array:2:string:7:amazingstring:4:N.A.,,string:8:organism:Null,string:9:sampleIds:array:2:string:36:195b8930-2750-431c-bac7-0fa334c1c6c1string:36:9c1cca61-78ed-4314-a215-f7d6c21c08f5,string:11:sampleNames:array:2:string:3:WT1string:9:10k PBMCs,string:13:sampleOptions:array:2:object:3:string:9:prototype:Undefined,string:9:__proto__:string:12:[CIRCULAR:1],string:11:constructor:fn:string:8:[native]string:20:function-name:Objectstring:12:[CIRCULAR:2],object:3:string:9:prototype:Undefined,string:9:__proto__:string:12:[CIRCULAR:1],string:11:constructor:fn:string:8:[native]string:20:function-name:Objectstring:12:[CIRCULAR:2],,string:16:sampleTechnology:string:3:10x,'
+hash.update(prefix.encode('utf-8'))
+# hash.update(json_data)
 res = hash.hexdigest()
 print(res)
+
+
+#330c29488de122d024821814ccfafb1d9c505c30

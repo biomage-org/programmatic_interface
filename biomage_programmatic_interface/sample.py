@@ -35,6 +35,16 @@ class Sample:
         self.__sample_files.append(sample_file)
 
     @staticmethod
+    def clean_json(json):
+        return {
+            'metadata': json['metadata'],
+            'name': json['name'],
+            'sampleId': json['id'],
+            'type': json['sampleTechnology'],
+            'options': json['options']
+        }
+
+    @staticmethod
     def __find_all_files_recursively(path):
         file_paths = listdir(path)
         ret = {}

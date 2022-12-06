@@ -99,4 +99,8 @@ class Experiment:
     def get_samples(self):
         url = f'v2/experiments/{self.id}/samples'
         res = self.__connection.fetch_api(url, method='GET')
-        print(res.content)
+        
+        json_array = json.loads(res.content)
+        
+        clean_array = list(map(Sample.clean_json, json_array))
+        print(clean_array)
