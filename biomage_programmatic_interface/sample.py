@@ -12,17 +12,16 @@ class Sample:
         self.__uuid = None
         self.__sample_files = []
 
-    def to_json(self):
-        return {"name": self.__name, "sampleTechnology": "10x", "options": {}}
-
+    @property
     def name(self):
         return self.__name
 
+    @property
     def uuid(self):
         return self.__uuid
 
-    def experiment_id(self):
-        return self.__experiment_id
+    def to_json(self):
+        return {"name": self.__name, "sampleTechnology": "10x", "options": {}}
 
     def get_sample_files(self):
         return self.__sample_files
@@ -48,7 +47,7 @@ class Sample:
 
             if isfile(full_path):
                 file = SampleFile(full_path)
-                folder_name = file.folder()
+                folder_name = file.folder
 
                 if ret.get(folder_name) is None:
                     ret[folder_name] = Sample(folder_name)

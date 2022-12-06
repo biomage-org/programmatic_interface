@@ -14,6 +14,9 @@ PACKAGE=biomage_programmatic_interface
 install: clean ## Creates venv and installs the package
 	@echo "==> Creating virtual environment..."
 	@python3 -m venv venv/
+	@venv/bin/pip install flake8
+	@venv/bin/pip install black
+	@venv/bin/pip install isort
 	@echo "    [✓]"
 	@echo
 
