@@ -17,7 +17,7 @@ class Experiment:
             "description": "",
         }
         url = f'v2/experiments/{id}'
-        connection.fetch_api(url, json=experiment_data)
+        connection.fetch_api(url, body=experiment_data)
         return Experiment(connection, id, name)
 
     @staticmethod
@@ -55,7 +55,16 @@ class Experiment:
         response = self.__connection.fetch_api(url, sample_file.to_json())
         return response.content
 
-    def __create_and_upload_sample(self, sample):
+    def __create_samples(self, samples):
+        url = f"v2/experiments/{self.id}/samples"
+        body = [sample.to_json() for sample in samples]
+
+        sample_ids_by_name = self.__connection.fetch_api(url, body).json()
+
+        for sample in samples:
+            sample.uuid = sample_ids_by_name[sample.name]
+
+    def __upload_sample(self, sample):
         url = f"v2/experiments/{self.id}/samples/{sample.uuid}"
         self.__connection.fetch_api(url, sample.to_json())
 
@@ -66,14 +75,17 @@ class Experiment:
             )
             s3url = s3url_raw.decode("utf-8").replace('"', "")
             self.__connection.uploadS3(sample_file, s3url)
+
             self.__notify_upload(sample.uuid, sample_file.get_type())
 
     def upload_samples(self, samples_path):
         samples = Sample.get_all_samples_from_path(samples_path)
 
+        self.__create_samples(samples)
+
         for sample in samples:
             try:
-                self.__create_and_upload_sample(sample)
+                self.__upload_sample(sample)
             except Exception as e:
                 print(
                     f"Upload failed: {e}. This is likely an error within \

@@ -1,4 +1,3 @@
-import uuid
 from os import listdir
 from os.path import isfile, join
 
@@ -20,17 +19,17 @@ class Sample:
     def uuid(self):
         return self.__uuid
 
+    @uuid.setter
+    def uuid(self, uuid):
+        if self.__uuid is not None:
+            raise Exception(f"uuid already set for sample {self.__name}")
+        self.__uuid = uuid
+
     def to_json(self):
         return {"name": self.__name, "sampleTechnology": "10x", "options": {}}
 
     def get_sample_files(self):
         return self.__sample_files
-
-    def set_uuid(self, uuid):
-        if self.__uuid == None:
-            self.__uuid = uuid
-        else:
-            raise Exception(f"uuid already set for sample {self.__name}")
 
     def add_sample_file(self, sample_file):
         self.__sample_files.append(sample_file)
