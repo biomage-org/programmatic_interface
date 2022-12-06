@@ -43,8 +43,12 @@ class Connection:
             return instance_url
         return f"https://api.{instance_url}/"
 
-    def fetch_api(self, url, json, method="POST"):
-        methods = {"POST": requests.post, "PATCH": requests.patch}
+    def fetch_api(self, url, body = {}, method="POST"):
+        methods = {
+            'POST': requests.post, 
+            'PATCH': requests.patch,
+            'GET': requests.get,
+            }
 
         headers = {
             "Authorization": "Bearer " + self.__jwt,
@@ -65,4 +69,9 @@ class Connection:
     def create_experiment(self, experiment_name=None):
         experiment = Experiment.create_experiment(self, experiment_name)
         print(f"Experiment {experiment.name} created!") if self.verbose else ""
+        return experiment
+
+    def load_experiment(self, experiment_id):
+        experiment = Experiment.load_experiment(self, experiment_id)
+        print(f"Experiment {experiment.name} loaded!") if self.verbose else ""
         return experiment

@@ -1,6 +1,6 @@
 import datetime
 import hashlib
-
+import json
 from biomage_programmatic_interface.sample import Sample
 
 
@@ -16,9 +16,21 @@ class Experiment:
             "name": name,
             "description": "",
         }
-
-        connection.fetch_api("v2/experiments/" + id, json=experiment_data)
+        url = f'v2/experiments/{id}'
+        connection.fetch_api(url, json=experiment_data)
         return Experiment(connection, id, name)
+
+    @staticmethod
+    def load_experiment(connection, id):
+        url = f'v2/experiments/{id}'
+
+        resp = connection.fetch_api(url, method='GET')
+        if resp.status_code != 200:
+            raise Exception('Couldn\'t load experiment')
+
+        data = json.loads(resp.content)
+
+        return Experiment(connection, data['id'], data['name'])
 
     def __init__(self, connection, id, name):
         self.__connection = connection
@@ -71,3 +83,8 @@ class Experiment:
                     "Please send an email to hello@biomage.net and we \
                      will try to resolve this problem as soon as possible"
                 )
+
+    def get_samples(self):
+        url = f'v2/experiments/{self.id}/samples'
+        res = self.__connection.fetch_api(url, method='GET')
+        print(res.content)
