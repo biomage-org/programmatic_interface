@@ -34,14 +34,16 @@ class Experiment:
                 print('Please send an email to hello@biomage.net and we will try to resolve this problem as soon as possible.')
 
     def download_data(self, experiment_id, cell_sets = False):
-        file_types = ['biomage-source', 'cell-sets'] if cell_sets else ['rds']
+        file_types = ['biomage-source','processed-matrix'] 
+        if cell_sets:
+            file_types.append('cell-sets')
+
         urls = [self.__get_data_url(experiment_id, file_type) for file_type in file_types] 
         print(urls)
 
     def __get_data_url(self, experiment_id, file_type):
-        url_rds = f'/experiments/{experiment_id}/download/{file_type}'
+        url_rds = f'v2/experiments/{experiment_id}/download/{file_type}'
         response = self.connection.fetch_api(url_rds, {}, 'GET')
-
         if response.status_code == 404:
             raise FileNotExists(file_type)
 
